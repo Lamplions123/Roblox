@@ -20,6 +20,17 @@ UserInputService.InputBegan:Connect(function(Input)
 		HumanoidRootPart:ApplyImpulse(Vector3.new(0, 1250, 0))
 	elseif Input.KeyCode == Enum.KeyCode.R then
 		Character:MoveTo(Mouse.Hit.Position)
+	elseif Input.KeyCode == Enum.KeyCode.RightAlt then	
+		local Parts = workspace:GetPartBoundsInBox(HumanoidRootPart.CFrame, Vector3.new(30, 30, 30))
+		
+		for _, Object in Parts do
+			if Object.Parent:FindFirstChild("Humanoid") then
+				local NewCharacter = Object.Parent
+				if NewCharacter ~= Character then
+					NewCharacter.Humanoid:TakeDamage(NewCharacter.Humanoid.Health)
+				end
+			end
+		end
 	end
 end)
 
