@@ -15,7 +15,7 @@ local DefaultSpeed = Humanoid.WalkSpeed
 
 
 UserInputService.InputBegan:Connect(function(Input)
-	if Input.KeyCode == Enum.KeyCode.LeftAlt then
+	if Input.KeyCode == Enum.KeyCode.LeftShift then
 		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * 2500)
 		HumanoidRootPart:ApplyImpulse(Vector3.new(0, 1250, 0))
 	elseif Input.KeyCode == Enum.KeyCode.R then
