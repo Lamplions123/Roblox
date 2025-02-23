@@ -36,7 +36,7 @@ UserInputService.InputBegan:Connect(function(Input)
 	end
 end)
 --------------
-local WaterPart = workspace.Map["WaterBase-Plane"]
+local WaterPart = workspace.Map:WaitForChild("WaterBase-Plane")
 
 local NewPart = WaterPart:Clone()
 NewPart.CanTouch = true
