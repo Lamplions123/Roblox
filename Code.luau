@@ -49,6 +49,3 @@ RunService.RenderStepped:Connect(function()
 	local HumanoidRootPart = LocalPlayer.Character.HumanoidRootPart
 	NewPart.Position = Vector3.new(HumanoidRootPart.Position.X, NewPart.Position.Y, HumanoidRootPart.Position.Z)
 end)
-
-print("i like commits123")
-print("i very very like it123")
