@@ -32,15 +32,6 @@ NewPart.Parent = workspace
 NewPart.Position = WaterPart.Position + Vector3.new(0, 30, 0)
 NewPart.Transparency = 0
 
-NewPart.Touched:Connect(function(Hit)
-	if Hit.Parent:FindFirstChild("Humanoid") then
-		local NewCharacter = Hit.Parent
-		if NewCharacter == LocalPlayer.Character then
-			
-		end
-	end
-end)
-
 Humanoid.Running:Connect(function(Speed)
 	if Speed ~= 0 then
 		IsRunning = true
