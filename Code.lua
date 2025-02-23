@@ -3,9 +3,6 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character
-local HumanoidRootPart = Character.HumanoidRootPart
-local Humanoid = Character.Humanoid
 
 local World1 = 2753915549
 local World2 = 4442272183
@@ -13,12 +10,13 @@ local World3 = 7449423635
 
 local Camera = workspace.CurrentCamera
 local Mouse = LocalPlayer:GetMouse()
-local IsRunning = false
-
-local DefaultSpeed = Humanoid.WalkSpeed
-
 
 UserInputService.InputBegan:Connect(function(Input)
+	if not LocalPlayer.Character then return end
+	
+	local Character = LocalPlayer.Character
+	local HumanoidRootPart = Character.HumanoidRootPart
+	
 	if Input.KeyCode == Enum.KeyCode.LeftShift then
 		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * 2500)
 		HumanoidRootPart:ApplyImpulse(Vector3.new(0, 1250, 0))
@@ -45,16 +43,8 @@ NewPart.CanTouch = true
 NewPart.Parent = workspace
 NewPart.Position = WaterPart.Position + Vector3.new(0, 16, 0)
 
-Humanoid.Running:Connect(function(Speed)
-	if Speed ~= 0 then
-		IsRunning = true
-	else
-		IsRunning = false
-	end
-end)
-
 RunService.RenderStepped:Connect(function()
-	if IsRunning then
-		NewPart.Position = Vector3.new(HumanoidRootPart.Position.X, NewPart.Position.Y, HumanoidRootPart.Position.Z)
-	end
+	if not LocalPlayer.Character then return end
+	local HumanoidRootPart = LocalPlayer.Character.HumanoidRootPart
+	NewPart.Position = Vector3.new(HumanoidRootPart.Position.X, NewPart.Position.Y, HumanoidRootPart.Position.Z)
 end)
