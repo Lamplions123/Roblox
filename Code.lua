@@ -30,7 +30,6 @@ local NewPart = WaterPart:Clone()
 NewPart.CanTouch = true
 NewPart.Parent = workspace
 NewPart.Position = WaterPart.Position + Vector3.new(0, 16, 0)
-NewPart.Transparency = 0
 
 Humanoid.Running:Connect(function(Speed)
 	if Speed ~= 0 then
