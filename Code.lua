@@ -29,7 +29,7 @@ local WaterPart = workspace.Map["WaterBase-Plane"]
 local NewPart = WaterPart:Clone()
 NewPart.CanTouch = true
 NewPart.Parent = workspace
-NewPart.Position = WaterPart.Position + Vector3.new(0, 12, 0)
+NewPart.Position = WaterPart.Position + Vector3.new(0, 16, 0)
 
 NewPart.Touched:Connect(function(Hit)
 	if Hit.Parent:FindFirstChild("Humanoid") then
