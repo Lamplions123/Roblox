@@ -21,7 +21,7 @@ UserInputService.InputBegan:Connect(function(Input)
 	elseif Input.KeyCode == Enum.KeyCode.R then
 		Character:MoveTo(Mouse.Hit.Position)
 	elseif Input.KeyCode == Enum.KeyCode.RightAlt then	
-		local Parts = workspace:GetPartBoundsInBox(HumanoidRootPart.CFrame, Vector3.new(30, 30, 30))
+		local Parts = workspace:GetPartBoundsInBox(HumanoidRootPart.CFrame, Vector3.new(50, 50, 50))
 		
 		for _, Object in Parts do
 			if Object.Parent:FindFirstChild("Humanoid") then
