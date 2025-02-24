@@ -17,9 +17,11 @@ local PositionY = 16
 
 UserInputService.InputBegan:Connect(function(Input)
 	if not LocalPlayer.Character then return end
-
 	local Character = LocalPlayer.Character
-	local HumanoidRootPart = Character.HumanoidRootPart
+	
+	local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+	if not HumanoidRootPart then return end
+
 
 	if Input.KeyCode == Enum.KeyCode.LeftShift then
 		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * 2500)
@@ -46,8 +48,10 @@ WaterPart.Parent = workspace
 
 RunService.RenderStepped:Connect(function()
 	if not LocalPlayer.Character then return end
-	if not LocalPlayer.Character.HumanoidRootPart then return end
-	local HumanoidRootPart = LocalPlayer.Character.HumanoidRootPart
+	
+	local HumanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+	if not HumanoidRootPart then return end
+	
 	WaterPart.Position = Vector3.new(HumanoidRootPart.Position.X, WaterBasePlane.Position.Y + PositionY, HumanoidRootPart.Position.Z)
 end)
 
@@ -63,11 +67,10 @@ local function LoadGui()
 	TextBox.TextScaled = true
 	TextBox.FocusLost:Connect(function()
 		if tonumber(TextBox.Text) then
-			print(TextBox.Text)
 			if TextBox.Text == 0 then
 				WaterPart.Transparency = 1
 			else
-				WaterPart.Transparency = 0.75
+				WaterPart.Transparency = 0.9
 			end
 			PositionY = TextBox.Text + 16
 		else
