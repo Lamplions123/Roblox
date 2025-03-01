@@ -87,6 +87,7 @@ local function LoadGui()
 		
 		if Element:IsA("Frame") or Element:IsA("ScrollingFrame") then
 			Element.BorderSizePixel = 0
+			Element.BackgroundTransparency = 1
 			if Element:IsA("ScrollingFrame") then
 				Element.AutomaticCanvasSize = Enum.AutomaticSize.Y
 			end
@@ -122,8 +123,9 @@ local function LoadGui()
 	
 	local MainFrame = SetUpGuiElement(Instance.new("Frame", ScreenGui), {
 		Name = "MainFrame",
-		Size = {X = 0.25, Y = 0.25}, 
-		Position = {X = 0.5, Y = 0.5},
+		Size = {X = 0.3, Y = 0.3}, 
+		Position = {X = 0.25, Y = 0.25},
+		BackgroundTransparency = 0.5,
 		UICorner = 16,
 		UIDragDetector = true,
 		Visible = false
@@ -141,16 +143,9 @@ local function LoadGui()
 		Position = {Y = 0.05}
 	})
 	
-	local Bar = SetUpGuiElement(Instance.new("Frame", MainFrame), {
-		Name = "Bar",
-		Size = {X = 0.005, Y = 1},
-		Position = {X = 0.2},
-		BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	})
-	
 	local LButton = SetUpGuiElement(Instance.new("TextButton", ScreenGui), {
 		Name = "LButton",
-		Size = {X = 0.025, Y = 0.05},
+		Size = {X = 0.05, Y = 0.1},
 		Text = "L",
 		UICorner = 24
 	})
