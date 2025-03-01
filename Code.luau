@@ -1,4 +1,3 @@
-
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -167,7 +166,7 @@ local function LoadGui()
 			Text = Name,
 			UICorner = 16
 		})
-		CategoryY += 0.1
+		CategoryY += 0.15
 		
 		CategoryButton.MouseButton1Click:Connect(function()
 			for Index, Value in ScrollingFrameFunctions:GetChildren() do
