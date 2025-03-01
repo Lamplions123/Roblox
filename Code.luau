@@ -12,10 +12,10 @@ local Camera = workspace.CurrentCamera
 local Mouse = LocalPlayer:GetMouse()
 
 local PositionY = 16
-local TeleportsAreEnabled = false
-local LeftShiftIsEnabled = false
-local RightAltIsEnabled = false
-local WalkingOnWaterIsEnabled = false
+local TeleportsAreEnabled = true
+local LeftShiftIsEnabled = true
+local RightAltIsEnabled = true
+local WalkingOnWaterIsEnabled = true
 
 UserInputService.InputBegan:Connect(function(Input)
 	if not LocalPlayer.Character then return end
@@ -178,7 +178,7 @@ local function LoadGui()
 		return Name
 	end
 	
-	local function InsertElementInCategory(Element: string, Text: string, Category: string)
+	local function InsertElementInCategory(Element: string, Text: string, Category: string, MustBeActive: boolean)
 		local CategoryFrame: Frame = ScrollingFrameFunctions[Category.."Frame"]
 		
 		local Element = SetUpGuiElement(Instance.new(Element, CategoryFrame), {
@@ -191,22 +191,27 @@ local function LoadGui()
 		CategoryFrame:SetAttribute("Y", CategoryFrame:GetAttribute("Y") + 0.25)
 		
 		if Element:IsA("TextButton") then
-			Element:SetAttribute("Enabled", false)
+			
+			if MustBeActive then
+				Element:SetAttribute("Enabled", true)
+				Element.TextColor3 = Color3.fromRGB(0, 255, 0)				
+			else		
+				Element:SetAttribute("Enabled", false)
+			end
+			
 			Element.MouseButton1Click:Connect(function()
-				if Element.TextColor3 == Color3.fromRGB(255, 255, 255) then
-					Element.TextColor3 = Color3.fromRGB(0, 255, 0)
-					Element:SetAttribute("Enabled", true)
-				else
+				if Element:GetAttribute("Enabled") then
 					Element.TextColor3 = Color3.fromRGB(255, 255, 255)
 					Element:SetAttribute("Enabled", false)
+				else
+					Element.TextColor3 = Color3.fromRGB(0, 255, 0)
+					Element:SetAttribute("Enabled", true)
 				end
 			end)
 		end
 		
 		return Element
 	end
-	
-	
 	
 	--- Teleport Category
 	local TeleportCategory = CreateCategory("Teleport 🌍")
@@ -225,10 +230,10 @@ local function LoadGui()
 	
 	-- Movement Category
 	local MovementCategory = CreateCategory("Movement 🏃‍")
-	local EnableWalkingButton = InsertElementInCategory("TextButton", "Enable walking on water", MovementCategory)
+	local EnableWalkingButton = InsertElementInCategory("TextButton", "Enable walking on water", MovementCategory, true)
 	local SeaLevelButton = InsertElementInCategory("TextBox", "Write sea level here", MovementCategory)
-	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports", MovementCategory)
-	local LeftShiftButton = InsertElementInCategory("TextButton", "Enable Left Shift", MovementCategory)
+	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports", MovementCategory, true)
+	local LeftShiftButton = InsertElementInCategory("TextButton", "Enable Left Shift", MovementCategory, true)
 	
 	EnableWalkingButton.MouseButton1Click:Connect(function()
 		task.wait()
@@ -268,7 +273,7 @@ local function LoadGui()
 	
 	-- Other
 	local OtherCategory = CreateCategory("Other 🤔")
-	local RightAltButton = InsertElementInCategory("TextButton", "Enable Right Alt", OtherCategory)
+	local RightAltButton = InsertElementInCategory("TextButton", "Enable Right Alt", OtherCategory, true)
 	RightAltButton.MouseButton1Click:Connect(function()
 		task.wait()
 		if LeftShiftButton:GetAttribute("Enabled") then
