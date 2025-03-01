@@ -90,11 +90,8 @@ local function LoadGui()
 			Element.BackgroundTransparency = 1
 			if Element:IsA("ScrollingFrame") then
 				Element.AutomaticCanvasSize = Enum.AutomaticSize.Y
+				Element.ScrollBarThickness = 0
 			end
-		end
-		
-		if Element:IsA("ScrollingFrame") then
-			Element.ScrollBarThickness = 0
 		end
 		
 		if Element:IsA("TextLabel") or Element:IsA("TextButton") or Element:IsA("TextBox") then
@@ -143,6 +140,14 @@ local function LoadGui()
 		Position = {Y = 0.05}
 	})
 	
+	local Bar = SetUpGuiElement(Instance.new("Frame", MainFrame), {
+		Name = "Bar",
+		Size = {X = 0.005, Y = 1},
+		Position = {X = 0.2},
+		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+		BackgroundTransparency = 0
+	})
+	
 	local LButton = SetUpGuiElement(Instance.new("TextButton", ScreenGui), {
 		Name = "LButton",
 		Size = {X = 0.05, Y = 0.1},
@@ -161,12 +166,12 @@ local function LoadGui()
 		
 		local CategoryButton = SetUpGuiElement(Instance.new("TextButton", ScrollingFrameCategories), {
 			Name = Name.."Button",
-			Size = {X = 1, Y = 0.1},
+			Size = {X = 1, Y = 0.2},
 			Position = {Y = CategoryY},
 			Text = Name,
 			UICorner = 16
 		})
-		CategoryY += 0.15
+		CategoryY += 0.25
 		
 		CategoryButton.MouseButton1Click:Connect(function()
 			for Index, Value in ScrollingFrameFunctions:GetChildren() do
