@@ -24,7 +24,7 @@ UserInputService.InputBegan:Connect(function(Input)
 
 
 	if Input.KeyCode == Enum.KeyCode.LeftShift then
-		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * 2500)
+		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * 5000)
 		HumanoidRootPart:ApplyImpulse(Vector3.new(0, 1250, 0))
 	elseif Input.KeyCode == Enum.KeyCode.R then
 		Character:MoveTo(Mouse.Hit.Position)
