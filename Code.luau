@@ -178,7 +178,7 @@ local function LoadGui()
 		return Name
 	end
 	
-	local function InsertElementInCategory(Element: string, Text: string, Category: string, MustBeActive: boolean)
+	local function InsertElementInCategory(Element: string, Text: string, Category: string, MustBeActive: boolean, ActiveOnly: boolean)
 		local CategoryFrame: Frame = ScrollingFrameFunctions[Category.."Frame"]
 		
 		local Element = SetUpGuiElement(Instance.new(Element, CategoryFrame), {
@@ -200,12 +200,14 @@ local function LoadGui()
 			end
 			
 			Element.MouseButton1Click:Connect(function()
-				if Element:GetAttribute("Enabled") then
-					Element.TextColor3 = Color3.fromRGB(255, 255, 255)
-					Element:SetAttribute("Enabled", false)
-				else
-					Element.TextColor3 = Color3.fromRGB(0, 255, 0)
-					Element:SetAttribute("Enabled", true)
+				if not ActiveOnly then
+					if Element:GetAttribute("Enabled") then
+						Element.TextColor3 = Color3.fromRGB(255, 255, 255)
+						Element:SetAttribute("Enabled", false)
+					else
+						Element.TextColor3 = Color3.fromRGB(0, 255, 0)
+						Element:SetAttribute("Enabled", true)
+					end
 				end
 			end)
 		end
@@ -216,13 +218,6 @@ local function LoadGui()
 	--- Teleport Category
 	local TeleportCategory = CreateCategory("Teleport 🌍")
 	local RejoinTheServer = InsertElementInCategory("TextButton", "Rejoin the current server", TeleportCategory)
-	for Index=1, #Worlds do
-		local TeleportButton = InsertElementInCategory("TextButton", `Teleport to {Index} world`, TeleportCategory)
-		
-		TeleportButton.MouseButton1Click:Connect(function()
-			TeleportService:Teleport(Worlds[Index], LocalPlayer)
-		end)
-	end
 	
 	RejoinTheServer.MouseButton1Click:Connect(function()
 		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
@@ -232,7 +227,7 @@ local function LoadGui()
 	local MovementCategory = CreateCategory("Movement 🏃‍")
 	local EnableWalkingButton = InsertElementInCategory("TextButton", "Enable walking on water", MovementCategory, true)
 	local SeaLevelButton = InsertElementInCategory("TextBox", "Write sea level here", MovementCategory)
-	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports", MovementCategory, true)
+	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports ", MovementCategory, true)
 	local LeftShiftButton = InsertElementInCategory("TextButton", "Enable Left Shift", MovementCategory, true)
 	
 	EnableWalkingButton.MouseButton1Click:Connect(function()
@@ -274,6 +269,8 @@ local function LoadGui()
 	-- Other
 	local OtherCategory = CreateCategory("Other 🤔")
 	local RightAltButton = InsertElementInCategory("TextButton", "Enable Right Alt", OtherCategory, true)
+	local ChangeTeamToPirates = InsertElementInCategory("TextButton", "Change team to Pirates 🐟", OtherCategory, false, true)
+	local ChangeTeamToMarines = InsertElementInCategory("TextButton", "Change team to Marines 🦜", OtherCategory, false, true)
 	RightAltButton.MouseButton1Click:Connect(function()
 		task.wait()
 		if LeftShiftButton:GetAttribute("Enabled") then
@@ -281,6 +278,12 @@ local function LoadGui()
 		else
 			RightAltIsEnabled = false
 		end
+	end)
+	ChangeTeamToPirates.MouseButton1Click:Connect(function()
+		LocalPlayer.Team = game.Teams.Pirates
+	end)
+	ChangeTeamToMarines.MouseButton1Click:Connect(function()
+		LocalPlayer.Team = game.Teams.Marines
 	end)
 	
 	------
