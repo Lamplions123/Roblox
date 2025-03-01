@@ -188,7 +188,7 @@ local function LoadGui()
 			Position = {Y = CategoryFrame:GetAttribute("Y")},
 			UICorner = 16
 		})
-		CategoryFrame:SetAttribute("Y", CategoryFrame:GetAttribute("Y") + 0.2)
+		CategoryFrame:SetAttribute("Y", CategoryFrame:GetAttribute("Y") + 0.25)
 		
 		if Element:IsA("TextButton") then
 			Element:SetAttribute("Enabled", false)
