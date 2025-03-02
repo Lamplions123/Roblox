@@ -17,31 +17,33 @@ local LeftShiftIsEnabled = true
 local RightAltIsEnabled = true
 local WalkingOnWaterIsEnabled = true
 
-UserInputService.InputBegan:Connect(function(Input)
-	if not LocalPlayer.Character then return end
-	local Character = LocalPlayer.Character
+UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
+	if not GameProcessedEvent then
+		if not LocalPlayer.Character then return end
+		local Character = LocalPlayer.Character
 
-	local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-	if not HumanoidRootPart then return end
+		local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+		if not HumanoidRootPart then return end
 
 
-	if Input.KeyCode == Enum.KeyCode.LeftShift then
-		if LeftShiftIsEnabled then
-			HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * 5000)
-			HumanoidRootPart:ApplyImpulse(Vector3.new(0, 1250, 0))
-		end
-	elseif Input.KeyCode == Enum.KeyCode.R then
-		if TeleportsAreEnabled then
-			Character:MoveTo(Mouse.Hit.Position)
-		end
-	elseif Input.KeyCode == Enum.KeyCode.RightAlt then	
-		if RightAltIsEnabled then
-			local Parts = workspace:GetPartBoundsInBox(HumanoidRootPart.CFrame, Vector3.new(100, 100, 100))	
-			for _, Object in Parts do
-				if Object.Parent:FindFirstChild("Humanoid") then
-					local NewCharacter = Object.Parent
-					if NewCharacter ~= Character then
-						NewCharacter.Humanoid:TakeDamage(NewCharacter.Humanoid.Health)
+		if Input.KeyCode == Enum.KeyCode.LeftShift then
+			if LeftShiftIsEnabled then
+				HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * 5000)
+				HumanoidRootPart:ApplyImpulse(Vector3.new(0, 1250, 0))
+			end
+		elseif Input.KeyCode == Enum.KeyCode.R then
+			if TeleportsAreEnabled then
+				Character:MoveTo(Mouse.Hit.Position)
+			end
+		elseif Input.KeyCode == Enum.KeyCode.RightAlt then	
+			if RightAltIsEnabled then
+				local Parts = workspace:GetPartBoundsInBox(HumanoidRootPart.CFrame, Vector3.new(100, 100, 100))	
+				for _, Object in Parts do
+					if Object.Parent:FindFirstChild("Humanoid") then
+						local NewCharacter = Object.Parent
+						if NewCharacter ~= Character then
+							NewCharacter.Humanoid:TakeDamage(NewCharacter.Humanoid.Health)
+						end
 					end
 				end
 			end
