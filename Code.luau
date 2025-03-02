@@ -17,8 +17,7 @@ local LeftShiftIsEnabled = true
 local RightAltIsEnabled = true
 local WalkingOnWaterIsEnabled = true
 
-UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
-	if GameProcessedEvent then return end
+UserInputService.InputBegan:Connect(function(Input)
 	if not LocalPlayer.Character then return end
 	local Character = LocalPlayer.Character
 
