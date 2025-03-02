@@ -180,20 +180,18 @@ local function LoadGui()
 			CategoryFrame.Visible = true
 		end)
 		
-		return Name
+		return CategoryFrame
 	end
 	
-	local function InsertElementInCategory(Element: string, Text: string, Category: string, MustBeActive: boolean, ActiveOnly: boolean)
-		local CategoryFrame: Frame = ScrollingFrameFunctions[Category.."Frame"]
-		
-		local Element = SetUpGuiElement(Instance.new(Element, CategoryFrame), {
+	local function InsertElementInCategory(Element: string, Text: string, Category: Frame, MustBeActive: boolean, ChangeColor: boolean)
+		local Element = SetUpGuiElement(Instance.new(Element, Category), {
 			Name = Text,
 			Text = Text,
 			Size = {X = 1, Y = 0.2},
-			Position = {Y = CategoryFrame:GetAttribute("Y")},
+			Position = {Y = Category:GetAttribute("Y")},
 			UICorner = 16
 		})
-		CategoryFrame:SetAttribute("Y", CategoryFrame:GetAttribute("Y") + 0.25)
+		Category:SetAttribute("Y", Category:GetAttribute("Y") + 0.25)
 		
 		if Element:IsA("TextButton") then
 			
@@ -205,14 +203,14 @@ local function LoadGui()
 			end
 			
 			Element.MouseButton1Click:Connect(function()
-				if not ActiveOnly then
-					if Element:GetAttribute("Enabled") then
-						Element.TextColor3 = Color3.fromRGB(255, 255, 255)
-						Element:SetAttribute("Enabled", false)
-					else
-						Element.TextColor3 = Color3.fromRGB(0, 255, 0)
-						Element:SetAttribute("Enabled", true)
-					end
+				if ChangeColor then return end
+				
+				if Element:GetAttribute("Enabled") then
+					Element.TextColor3 = Color3.fromRGB(255, 255, 255)
+					Element:SetAttribute("Enabled", false)
+				else
+					Element.TextColor3 = Color3.fromRGB(0, 255, 0)
+					Element:SetAttribute("Enabled", true)
 				end
 			end)
 		end
@@ -238,7 +236,6 @@ local function LoadGui()
 	EnableWalkingButton.MouseButton1Click:Connect(function()
 		task.wait()
 		if EnableWalkingButton:GetAttribute("Enabled") then
-			print("true")
 			WalkingOnWaterIsEnabled = true
 		else
 			WalkingOnWaterIsEnabled = false
