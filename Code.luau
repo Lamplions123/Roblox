@@ -14,10 +14,12 @@ local Camera = workspace.CurrentCamera
 local Mouse = LocalPlayer:GetMouse()
 
 local WaterPositionY = 16
-local TeleportsAreEnabled = true
-local LeftShiftIsEnabled = true
-local RightAltIsEnabled = true
-local WalkingOnWaterIsEnabled = true
+local ImpulseHorizontalSpeed = 5000
+local ImpulseVerticalSpeed = 1250
+local TeleportsAreEnabled = false
+local LeftShiftIsEnabled = false
+local RightAltIsEnabled = false
+local WalkingOnWaterIsEnabled = false
 
 local GameName
 
@@ -29,11 +31,10 @@ UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
 	local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
 	if not HumanoidRootPart then return end
 
-
 	if Input.KeyCode == Enum.KeyCode.LeftShift then
 		if not LeftShiftIsEnabled then return end
-		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * 5000)
-		HumanoidRootPart:ApplyImpulse(Vector3.new(0, 1250, 0))
+		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * ImpulseHorizontalSpeed)
+		HumanoidRootPart:ApplyImpulse(Vector3.new(0, ImpulseVerticalSpeed, 0))
 	elseif Input.KeyCode == Enum.KeyCode.R then
 		if not TeleportsAreEnabled then return end
 		Character:MoveTo(Mouse.Hit.Position)
@@ -51,9 +52,12 @@ end)
 --------------
 local WaterPart
 local WaterBasePlane
+
 if game.PlaceId == BloxFruitWorlds[1] or game.PlaceId == BloxFruitWorlds[2] or game.PlaceId == BloxFruitWorlds[3] then
 	GameName = "BloxFruit"
-	
+end
+
+if GameName == "BloxFruit" then
 	WaterBasePlane = workspace.Map:WaitForChild("WaterBase-Plane")
 	WaterPart = WaterBasePlane:Clone()
 	WaterPart.Anchored = true
@@ -63,9 +67,10 @@ if game.PlaceId == BloxFruitWorlds[1] or game.PlaceId == BloxFruitWorlds[2] or g
 end
 
 
-
 RunService.RenderStepped:Connect(function()
 	if GameName ~= "BloxFruit" then return end
+	if not WaterBasePlane then return end
+	if not WaterPart then return end
 	if WalkingOnWaterIsEnabled then
 		WaterPart.CanCollide = true
 		if not LocalPlayer.Character then return end
@@ -86,7 +91,9 @@ local function LoadGui()
 	
 	local function SetUpGuiElement(Element: GuiBase, Properties: {any})
 		
-		if Element:IsA("TextButton") or Element:IsA("TextBox") then
+		if Element:IsA("TextButton") or Element:IsA("TextBox") or Element:IsA("TextLabel") then
+			Element.TextScaled = true
+			Element.TextColor3 = Color3.fromRGB(255, 255, 255)
 			Element.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 			Element.BackgroundTransparency = 0.8
 		else	
@@ -100,11 +107,6 @@ local function LoadGui()
 				Element.AutomaticCanvasSize = Enum.AutomaticSize.Y
 				Element.ScrollBarThickness = 0
 			end
-		end
-		
-		if Element:IsA("TextLabel") or Element:IsA("TextButton") or Element:IsA("TextBox") then
-			Element.TextScaled = true
-			Element.TextColor3 = Color3.fromRGB(255, 255, 255)
 		end
 		
 		for Property, Value in Properties do
@@ -191,7 +193,7 @@ local function LoadGui()
 		return CategoryFrame
 	end
 	
-	local function InsertElementInCategory(Element: string, Text: string, Category: Frame, DontChangeColor: boolean, TextColor3)
+	local function InsertElementInCategory(Element: string, Text: string, Category: Frame, DontChangeColor: boolean, TextColor3: Color3)
 		local Element = SetUpGuiElement(Instance.new(Element, Category), {
 			Name = Text,
 			Text = Text,
@@ -231,7 +233,7 @@ local function LoadGui()
 	local MovementCategory = CreateCategory("Movement 🏃‍")
 	if GameName == "BloxFruit" then
 		local EnableWalkingButton = InsertElementInCategory("TextButton", "Enable walking on water", MovementCategory)
-		local SeaLevelButton = InsertElementInCategory("TextBox", "Write sea level here", MovementCategory)
+		local SeaLevelButton = InsertElementInCategory("TextBox", `Sea level, {WaterPositionY - 16}`, MovementCategory)
 
 		EnableWalkingButton.MouseButton1Click:Connect(function()
 			task.wait()
@@ -245,13 +247,29 @@ local function LoadGui()
 		SeaLevelButton.FocusLost:Connect(function()
 			if tonumber(SeaLevelButton.Text) then
 				WaterPositionY = SeaLevelButton.Text + 16
-			else
-				SeaLevelButton.Text = "Write Sea Level"
 			end
+			SeaLevelButton.Text = `Sea level, {WaterPositionY - 16}`
 		end)		
 	end
 	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports ", MovementCategory)
 	local LeftShiftButton = InsertElementInCategory("TextButton", "Enable Left Shift", MovementCategory)
+	local ImpulseVerticalSpeedBox = InsertElementInCategory("TextBox", `Impulse vertical speed, {ImpulseVerticalSpeed}`, MovementCategory)
+	local ImpulseHorizontalSpeedBox = InsertElementInCategory("TextBox", `Impulse horizontal speed, {ImpulseHorizontalSpeed}`, MovementCategory)
+	
+	ImpulseVerticalSpeedBox.FocusLost:Connect(function()
+		if tonumber(ImpulseVerticalSpeedBox.Text) then
+			ImpulseVerticalSpeed = ImpulseVerticalSpeedBox.Text
+		end
+		ImpulseVerticalSpeedBox.Text = `Impulse vertical speed, {ImpulseVerticalSpeed}`
+	end)
+	
+	ImpulseHorizontalSpeedBox.FocusLost:Connect(function()
+		if tonumber(ImpulseHorizontalSpeedBox.Text) then
+			ImpulseHorizontalSpeed = ImpulseHorizontalSpeedBox.Text
+		end
+		ImpulseHorizontalSpeedBox.Text = `Impulse horizontal speed, {ImpulseHorizontalSpeed}`
+	end)
+	
 	
 	EnableTeleportsButton.MouseButton1Click:Connect(function()
 		task.wait()
@@ -285,15 +303,23 @@ local function LoadGui()
 	-- Other
 	local OtherCategory = CreateCategory("Other 🤔")
 	local RightAltButton = InsertElementInCategory("TextButton", "Enable Right Alt", OtherCategory)
-	RightAltButton.MouseButton1Click:Connect(function()
-		task.wait()
-		if LeftShiftButton:GetAttribute("Enabled") then
-			RightAltIsEnabled = true
-		else
-			RightAltIsEnabled = false
-		end
-	end)
-	
+	if GameName == "BloxFruit" then
+		local WaterTransparencyBox = InsertElementInCategory("TextBox", `Water transparency, {WaterPart.Transparency}`, OtherCategory)
+		RightAltButton.MouseButton1Click:Connect(function()
+			task.wait()
+			if LeftShiftButton:GetAttribute("Enabled") then
+				RightAltIsEnabled = true
+			else
+				RightAltIsEnabled = false
+			end
+		end)
+		WaterTransparencyBox.FocusLost:Connect(function()
+			if tonumber(WaterTransparencyBox.Text) then
+				WaterPart.Transparency = WaterTransparencyBox.Text
+			end
+			WaterTransparencyBox.Text = `Water transparency, {string.format("%.1f", WaterPart.Transparency)}`
+		end)
+	end
 	------
 	LButton.MouseButton1Click:Connect(function()
 		MainFrame.Visible = not MainFrame.Visible
