@@ -3,21 +3,26 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local TeleportService = game:GetService("TeleportService")
+local Teams = game:GetService("Teams")
+local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players.LocalPlayer
 
-local Worlds = {2753915549, 4442272183, 7449423635}
+local BloxFruitWorlds = {2753915549, 4442272183, 7449423635}
 
 local Camera = workspace.CurrentCamera
 local Mouse = LocalPlayer:GetMouse()
 
-local PositionY = 16
+local WaterPositionY = 16
 local TeleportsAreEnabled = true
 local LeftShiftIsEnabled = true
 local RightAltIsEnabled = true
 local WalkingOnWaterIsEnabled = true
 
-UserInputService.InputBegan:Connect(function(Input)
+local GameName
+
+UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
+	if GameProcessedEvent then return end
 	if not LocalPlayer.Character then return end
 	local Character = LocalPlayer.Character
 
@@ -26,38 +31,41 @@ UserInputService.InputBegan:Connect(function(Input)
 
 
 	if Input.KeyCode == Enum.KeyCode.LeftShift then
-		if LeftShiftIsEnabled then
-			HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * 5000)
-			HumanoidRootPart:ApplyImpulse(Vector3.new(0, 1250, 0))
-		end
+		if not LeftShiftIsEnabled then return end
+		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * 5000)
+		HumanoidRootPart:ApplyImpulse(Vector3.new(0, 1250, 0))
 	elseif Input.KeyCode == Enum.KeyCode.R then
-		if TeleportsAreEnabled then
-			Character:MoveTo(Mouse.Hit.Position)
-		end
+		if not TeleportsAreEnabled then return end
+		Character:MoveTo(Mouse.Hit.Position)
 	elseif Input.KeyCode == Enum.KeyCode.RightAlt then	
-		if RightAltIsEnabled then
-			local Parts = workspace:GetPartBoundsInBox(HumanoidRootPart.CFrame, Vector3.new(100, 100, 100))	
-			for _, Object in Parts do
-				if Object.Parent:FindFirstChild("Humanoid") then
-					local NewCharacter = Object.Parent
-					if NewCharacter ~= Character then
-						NewCharacter.Humanoid:TakeDamage(NewCharacter.Humanoid.Health)
-					end
-				end
-			end
+		if not RightAltIsEnabled then return end
+		local Parts = workspace:GetPartBoundsInBox(HumanoidRootPart.CFrame, Vector3.new(100, 100, 100))	
+		for _, Object in Parts do
+			if not Object.Parent:FindFirstChild("Humanoid") then continue end
+			local NewCharacter = Object.Parent
+			if NewCharacter == Character then return end
+			NewCharacter.Humanoid:TakeDamage(NewCharacter.Humanoid.Health)
 		end
 	end
 end)
 --------------
-local WaterBasePlane = workspace.Map:WaitForChild("WaterBase-Plane")
+local WaterPart
+local WaterBasePlane
+if game.PlaceId == BloxFruitWorlds[1] or game.PlaceId == BloxFruitWorlds[2] or game.PlaceId == BloxFruitWorlds[3] then
+	GameName = "BloxFruit"
+	
+	WaterBasePlane = workspace.Map:WaitForChild("WaterBase-Plane")
+	WaterPart = WaterBasePlane:Clone()
+	WaterPart.Anchored = true
+	WaterPart.CanCollide = false
+	WaterPart.Transparency = 1
+	WaterPart.Parent = workspace	
+end
 
-local WaterPart = WaterBasePlane:Clone()
-WaterPart.Anchored = true
-WaterPart.CanCollide = false
-WaterPart.Transparency = 1
-WaterPart.Parent = workspace
+
 
 RunService.RenderStepped:Connect(function()
+	if GameName ~= "BloxFruit" then return end
 	if WalkingOnWaterIsEnabled then
 		WaterPart.CanCollide = true
 		if not LocalPlayer.Character then return end
@@ -65,7 +73,7 @@ RunService.RenderStepped:Connect(function()
 		local HumanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 		if not HumanoidRootPart then return end
 
-		WaterPart.Position = Vector3.new(HumanoidRootPart.Position.X, WaterBasePlane.Position.Y + PositionY, HumanoidRootPart.Position.Z)
+		WaterPart.Position = Vector3.new(HumanoidRootPart.Position.X, WaterBasePlane.Position.Y + WaterPositionY, HumanoidRootPart.Position.Z)
 	else
 		WaterPart.CanCollide = false
 	end
@@ -183,7 +191,7 @@ local function LoadGui()
 		return CategoryFrame
 	end
 	
-	local function InsertElementInCategory(Element: string, Text: string, Category: Frame, MustBeActive: boolean, ChangeColor: boolean)
+	local function InsertElementInCategory(Element: string, Text: string, Category: Frame, DontChangeColor: boolean, TextColor3)
 		local Element = SetUpGuiElement(Instance.new(Element, Category), {
 			Name = Text,
 			Text = Text,
@@ -191,20 +199,13 @@ local function LoadGui()
 			Position = {Y = Category:GetAttribute("Y")},
 			UICorner = 16
 		})
+		if TextColor3 then Element.TextColor3 = TextColor3 end
 		Category:SetAttribute("Y", Category:GetAttribute("Y") + 0.25)
 		
 		if Element:IsA("TextButton") then
-			
-			if MustBeActive then
-				Element:SetAttribute("Enabled", true)
-				Element.TextColor3 = Color3.fromRGB(0, 255, 0)				
-			else		
-				Element:SetAttribute("Enabled", false)
-			end
-			
-			Element.MouseButton1Click:Connect(function()
-				if ChangeColor then return end
-				
+			Element:SetAttribute("Enabled", false)
+			Element.MouseButton1Click:Connect(function()			
+				if DontChangeColor then return end
 				if Element:GetAttribute("Enabled") then
 					Element.TextColor3 = Color3.fromRGB(255, 255, 255)
 					Element:SetAttribute("Enabled", false)
@@ -220,7 +221,7 @@ local function LoadGui()
 	
 	--- Teleport Category
 	local TeleportCategory = CreateCategory("Teleport 🌍")
-	local RejoinTheServer = InsertElementInCategory("TextButton", "Rejoin the current server", TeleportCategory)
+	local RejoinTheServer = InsertElementInCategory("TextButton", "Rejoin the current server", TeleportCategory, true)
 	
 	RejoinTheServer.MouseButton1Click:Connect(function()
 		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
@@ -228,27 +229,29 @@ local function LoadGui()
 	
 	-- Movement Category
 	local MovementCategory = CreateCategory("Movement 🏃‍")
-	local EnableWalkingButton = InsertElementInCategory("TextButton", "Enable walking on water", MovementCategory, true)
-	local SeaLevelButton = InsertElementInCategory("TextBox", "Write sea level here", MovementCategory)
-	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports ", MovementCategory, true)
-	local LeftShiftButton = InsertElementInCategory("TextButton", "Enable Left Shift", MovementCategory, true)
-	
-	EnableWalkingButton.MouseButton1Click:Connect(function()
-		task.wait()
-		if EnableWalkingButton:GetAttribute("Enabled") then
-			WalkingOnWaterIsEnabled = true
-		else
-			WalkingOnWaterIsEnabled = false
-		end
-	end)
-	
-	SeaLevelButton.FocusLost:Connect(function()
-		if tonumber(SeaLevelButton.Text) then
-			PositionY = SeaLevelButton.Text + 16
-		else
-			SeaLevelButton.Text = "Write Sea Level"
-		end
-	end)
+	if GameName == "BloxFruit" then
+		local EnableWalkingButton = InsertElementInCategory("TextButton", "Enable walking on water", MovementCategory)
+		local SeaLevelButton = InsertElementInCategory("TextBox", "Write sea level here", MovementCategory)
+
+		EnableWalkingButton.MouseButton1Click:Connect(function()
+			task.wait()
+			if EnableWalkingButton:GetAttribute("Enabled") then
+				WalkingOnWaterIsEnabled = true
+			else
+				WalkingOnWaterIsEnabled = false
+			end
+		end)
+		
+		SeaLevelButton.FocusLost:Connect(function()
+			if tonumber(SeaLevelButton.Text) then
+				WaterPositionY = SeaLevelButton.Text + 16
+			else
+				SeaLevelButton.Text = "Write Sea Level"
+			end
+		end)		
+	end
+	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports ", MovementCategory)
+	local LeftShiftButton = InsertElementInCategory("TextButton", "Enable Left Shift", MovementCategory)
 	
 	EnableTeleportsButton.MouseButton1Click:Connect(function()
 		task.wait()
@@ -268,11 +271,20 @@ local function LoadGui()
 		end
 	end)
 	
+	-- Teams
+	if #Teams:GetTeams() ~= 0 then
+		local TeamsCategory = CreateCategory("Teams 🔴🔵")
+		for Index, Value in Teams:GetTeams() do
+			local TeamButton = InsertElementInCategory("TextButton", Value.Name, TeamsCategory, true, Value.TeamColor.Color)
+			TeamButton.MouseButton1Click:Connect(function()
+				LocalPlayer.Team = Value
+			end)
+		end
+	end
+	
 	-- Other
 	local OtherCategory = CreateCategory("Other 🤔")
-	local RightAltButton = InsertElementInCategory("TextButton", "Enable Right Alt", OtherCategory, true)
-	local ChangeTeamToPirates = InsertElementInCategory("TextButton", "Change team to Pirates 🐟", OtherCategory, false, true)
-	local ChangeTeamToMarines = InsertElementInCategory("TextButton", "Change team to Marines 🦜", OtherCategory, false, true)
+	local RightAltButton = InsertElementInCategory("TextButton", "Enable Right Alt", OtherCategory)
 	RightAltButton.MouseButton1Click:Connect(function()
 		task.wait()
 		if LeftShiftButton:GetAttribute("Enabled") then
@@ -280,12 +292,6 @@ local function LoadGui()
 		else
 			RightAltIsEnabled = false
 		end
-	end)
-	ChangeTeamToPirates.MouseButton1Click:Connect(function()
-		LocalPlayer.Team = game.Teams.Pirates
-	end)
-	ChangeTeamToMarines.MouseButton1Click:Connect(function()
-		LocalPlayer.Team = game.Teams.Marines
 	end)
 	
 	------
