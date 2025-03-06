@@ -21,12 +21,27 @@ local LeftShiftIsEnabled = false
 local RightAltIsEnabled = false
 local WalkingOnWaterIsEnabled = false
 
+local EnableDefaultBehaviour = false
+
 local GameName
 
-UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
-	if GameProcessedEvent then return end
-	if not LocalPlayer.Character then return end
-	local Character = LocalPlayer.Character
+local function ShowMainFrame()
+	local MainFrame = LocalPlayer.PlayerGui:FindFirstChild("LGui").MainFrame
+	if not MainFrame then return end
+	MainFrame.Visible = not MainFrame.Visible
+	if MainFrame.Visible then
+		EnableDefaultBehaviour = true
+	else
+		EnableDefaultBehaviour = false
+	end
+end
+
+local function GetOneNumber(Number: number)
+	return string.format("%0.1f", Number)
+end
+
+UserInputService.InputBegan:Connect(function(Input)
+	local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
 	local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
 	if not HumanoidRootPart then return end
@@ -47,7 +62,7 @@ UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
 			if NewCharacter == Character then return end
 			NewCharacter.Humanoid:TakeDamage(NewCharacter.Humanoid.Health)
 		end
-	end
+	elseif Input.KeyCode == Enum.KeyCode.LeftAlt then ShowMainFrame() end
 end)
 --------------
 local WaterPart
@@ -68,6 +83,10 @@ end
 
 
 RunService.RenderStepped:Connect(function()
+	if EnableDefaultBehaviour then
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+	end
+	
 	if GameName ~= "BloxFruit" then return end
 	if not WaterBasePlane then return end
 	if not WaterPart then return end
@@ -128,6 +147,7 @@ local function LoadGui()
 	ScreenGui.Name = "LGui"
 	ScreenGui.ResetOnSpawn = false
 	
+	
 	local MainFrame = SetUpGuiElement(Instance.new("Frame", ScreenGui), {
 		Name = "MainFrame",
 		Size = {X = 0.3, Y = 0.3}, 
@@ -135,7 +155,7 @@ local function LoadGui()
 		BackgroundTransparency = 0.5,
 		UICorner = 16,
 		UIDragDetector = true,
-		Visible = false
+		Visible = false,
 	})
 	
 	local ScrollingFrameFunctions = SetUpGuiElement(Instance.new("ScrollingFrame", MainFrame), {
@@ -249,7 +269,7 @@ local function LoadGui()
 				WaterPositionY = SeaLevelButton.Text + 16
 			end
 			SeaLevelButton.Text = `Sea level, {WaterPositionY - 16}`
-		end)		
+		end)
 	end
 	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports ", MovementCategory)
 	local LeftShiftButton = InsertElementInCategory("TextButton", "Enable Left Shift", MovementCategory)
@@ -317,13 +337,11 @@ local function LoadGui()
 			if tonumber(WaterTransparencyBox.Text) then
 				WaterPart.Transparency = WaterTransparencyBox.Text
 			end
-			WaterTransparencyBox.Text = `Water transparency, {string.format("%.1f", WaterPart.Transparency)}`
+			WaterTransparencyBox.Text = `Water transparency, {GetOneNumber(WaterPart.Transparency)}`
 		end)
 	end
 	------
-	LButton.MouseButton1Click:Connect(function()
-		MainFrame.Visible = not MainFrame.Visible
-	end)
+	LButton.MouseButton1Click:Connect(ShowMainFrame)
 end
 
 LoadGui()
