@@ -42,6 +42,12 @@ local function GetOneNumber(Number: number)
 	return string.format("%0.1f", Number)
 end
 
+local function GetLatestCharacterAndHumanoid()
+	local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+	local Humanoid = Character.Humanoid
+	return Character, Humanoid
+end
+
 UserInputService.InputBegan:Connect(function(Input)
 	local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
@@ -267,6 +273,33 @@ local function LoadGui()
 				WaterPositionY = SeaLevelButton.Text + 16
 			end
 			SeaLevelButton.Text = `Sea level, {WaterPositionY - 16}`
+		end)
+	else
+		local Character, Humanoid = GetLatestCharacterAndHumanoid()
+		
+		local WalkSpeedBox = InsertElementInCategory("TextBox", `Walk speed, {GetOneNumber(Humanoid.WalkSpeed)}`, MovementCategory)
+		local JumpHeightBox = InsertElementInCategory("TextBox", `Jump height, {GetOneNumber(Humanoid.JumpHeight)}`, MovementCategory)
+		
+		WalkSpeedBox.FocusLost:Connect(function()
+			local Character, Humanoid = GetLatestCharacterAndHumanoid()
+			if tonumber(WalkSpeedBox.Text) then
+				Humanoid.WalkSpeed = WalkSpeedBox.Text
+			end
+			WalkSpeedBox.Text = `Walk speed, {GetOneNumber(Humanoid.WalkSpeed)}`
+		end)		
+		JumpHeightBox.FocusLost:Connect(function()
+			local Character, Humanoid = GetLatestCharacterAndHumanoid()
+			if tonumber(JumpHeightBox.Text) then
+				Humanoid.JumpHeight = JumpHeightBox.Text
+			end
+			JumpHeightBox.Text = `Jump height, {GetOneNumber(Humanoid.JumpHeight)}`
+		end)
+		
+		Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+			WalkSpeedBox.Text = `Walk speed, {GetOneNumber(Humanoid.WalkSpeed)}`
+		end)
+		Humanoid:GetPropertyChangedSignal("JumpHeight"):Connect(function()
+			JumpHeightBox.Text = `Jump height, {GetOneNumber(Humanoid.JumpHeight)}`
 		end)
 	end
 	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports ", MovementCategory)
