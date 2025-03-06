@@ -97,7 +97,7 @@ RunService.RenderStepped:Connect(function()
 	else
 		UserInputService.MouseIconEnabled = MouseIconStandartValue
 	end
-	
+
 	if GameName ~= "BloxFruit" then return end
 	if not WaterBasePlane then return end
 	if not WaterPart then return end
@@ -118,9 +118,9 @@ end)
 
 local function LoadGui()
 	local CategoryY = 0
-	
+
 	local function SetUpGuiElement(Element: GuiBase, Properties: {any})
-		
+
 		if Element:IsA("TextButton") or Element:IsA("TextBox") or Element:IsA("TextLabel") then
 			Element.TextScaled = true
 			Element.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -129,7 +129,7 @@ local function LoadGui()
 		else	
 			Element.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
 		end
-		
+
 		if Element:IsA("Frame") or Element:IsA("ScrollingFrame") then
 			Element.BorderSizePixel = 0
 			Element.BackgroundTransparency = 1
@@ -138,7 +138,7 @@ local function LoadGui()
 				Element.ScrollBarThickness = 0
 			end
 		end
-		
+
 		for Property, Value in Properties do
 			if Property == "Size" or Property == "Position" then
 				Element[Property] = UDim2.new(Value.X, 0, Value.Y, 0)
@@ -150,15 +150,15 @@ local function LoadGui()
 				Element[Property] = Value
 			end
 		end
-		
+
 		return Element
 	end
-	
+
 	local ScreenGui = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
 	ScreenGui.Name = "LGui"
 	ScreenGui.ResetOnSpawn = false
-	
-	
+
+
 	local MainFrame = SetUpGuiElement(Instance.new("Frame", ScreenGui), {
 		Name = "MainFrame",
 		Size = {X = 0.3, Y = 0.3}, 
@@ -168,19 +168,19 @@ local function LoadGui()
 		UIDragDetector = true,
 		Visible = false,
 	})
-	
+
 	local ScrollingFrameFunctions = SetUpGuiElement(Instance.new("ScrollingFrame", MainFrame), {
 		Name = "ScrollingFrameFunctions",
 		Size = {X = 0.8, Y = 0.9},
 		Position = {X = 0.2, Y = 0.05}
 	})
-	
+
 	local ScrollingFrameCategories = SetUpGuiElement(Instance.new("ScrollingFrame", MainFrame), {
 		Name = "ScrollingFrameCategories",
 		Size = {X = 0.2, Y = 0.9},
 		Position = {Y = 0.05}
 	})
-	
+
 	local Bar = SetUpGuiElement(Instance.new("Frame", MainFrame), {
 		Name = "Bar",
 		Size = {X = 0.005, Y = 1},
@@ -188,7 +188,7 @@ local function LoadGui()
 		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 		BackgroundTransparency = 0
 	})
-	
+
 	---
 	local function CreateCategory(Name: string)
 		local CategoryFrame = SetUpGuiElement(Instance.new("Frame", ScrollingFrameFunctions), {
@@ -197,7 +197,7 @@ local function LoadGui()
 			Visible = false
 		})
 		CategoryFrame:SetAttribute("Y", 0)
-		
+
 		local CategoryButton = SetUpGuiElement(Instance.new("TextButton", ScrollingFrameCategories), {
 			Name = Name.."Button",
 			Size = {X = 1, Y = 0.2},
@@ -206,17 +206,17 @@ local function LoadGui()
 			UICorner = 16
 		})
 		CategoryY += 0.25
-		
+
 		CategoryButton.MouseButton1Click:Connect(function()
 			for Index, Value in ScrollingFrameFunctions:GetChildren() do
 				Value.Visible = false
 			end
 			CategoryFrame.Visible = true
 		end)
-		
+
 		return CategoryFrame
 	end
-	
+
 	local function InsertElementInCategory(Element: string, Text: string, Category: Frame, DontChangeColor: boolean, TextColor3: Color3)
 		local Element = SetUpGuiElement(Instance.new(Element, Category), {
 			Name = Text,
@@ -227,7 +227,7 @@ local function LoadGui()
 		})
 		if TextColor3 then Element.TextColor3 = TextColor3 end
 		Category:SetAttribute("Y", Category:GetAttribute("Y") + 0.25)
-		
+
 		if Element:IsA("TextButton") then
 			Element:SetAttribute("Enabled", false)
 			Element.MouseButton1Click:Connect(function()			
@@ -241,18 +241,18 @@ local function LoadGui()
 				end
 			end)
 		end
-		
+
 		return Element
 	end
-	
+
 	--- Teleport Category
 	local TeleportCategory = CreateCategory("Teleport 🌍")
 	local RejoinTheServer = InsertElementInCategory("TextButton", "Rejoin the current server", TeleportCategory, true)
-	
+
 	RejoinTheServer.MouseButton1Click:Connect(function()
 		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
 	end)
-	
+
 	-- Movement Category
 	local MovementCategory = CreateCategory("Movement 🏃‍")
 	if GameName == "BloxFruit" then
@@ -267,61 +267,35 @@ local function LoadGui()
 				WalkingOnWaterIsEnabled = false
 			end
 		end)
-		
+
 		SeaLevelButton.FocusLost:Connect(function()
 			if tonumber(SeaLevelButton.Text) then
 				WaterPositionY = SeaLevelButton.Text + 16
 			end
 			SeaLevelButton.Text = `Sea level, {WaterPositionY - 16}`
 		end)
-	else
-		local Character, Humanoid = GetLatestCharacterAndHumanoid()
-		
-		local WalkSpeedBox = InsertElementInCategory("TextBox", `Walk speed, {GetOneNumber(Humanoid.WalkSpeed)}`, MovementCategory)
-		local JumpHeightBox = InsertElementInCategory("TextBox", `Jump height, {GetOneNumber(Humanoid.JumpHeight)}`, MovementCategory)
-		
-		WalkSpeedBox.FocusLost:Connect(function()
-			local Character, Humanoid = GetLatestCharacterAndHumanoid()
-			if tonumber(WalkSpeedBox.Text) then
-				Humanoid.WalkSpeed = WalkSpeedBox.Text
-			end
-			WalkSpeedBox.Text = `Walk speed, {GetOneNumber(Humanoid.WalkSpeed)}`
-		end)		
-		JumpHeightBox.FocusLost:Connect(function()
-			local Character, Humanoid = GetLatestCharacterAndHumanoid()
-			if tonumber(JumpHeightBox.Text) then
-				Humanoid.JumpHeight = JumpHeightBox.Text
-			end
-			JumpHeightBox.Text = `Jump height, {GetOneNumber(Humanoid.JumpHeight)}`
-		end)
-		
-		Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
-			WalkSpeedBox.Text = `Walk speed, {GetOneNumber(Humanoid.WalkSpeed)}`
-		end)
-		Humanoid:GetPropertyChangedSignal("JumpHeight"):Connect(function()
-			JumpHeightBox.Text = `Jump height, {GetOneNumber(Humanoid.JumpHeight)}`
-		end)
 	end
+	
 	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports ", MovementCategory)
 	local LeftShiftButton = InsertElementInCategory("TextButton", "Enable Left Shift", MovementCategory)
 	local ImpulseVerticalSpeedBox = InsertElementInCategory("TextBox", `Impulse vertical speed, {ImpulseVerticalSpeed}`, MovementCategory)
 	local ImpulseHorizontalSpeedBox = InsertElementInCategory("TextBox", `Impulse horizontal speed, {ImpulseHorizontalSpeed}`, MovementCategory)
-	
+
 	ImpulseVerticalSpeedBox.FocusLost:Connect(function()
 		if tonumber(ImpulseVerticalSpeedBox.Text) then
 			ImpulseVerticalSpeed = ImpulseVerticalSpeedBox.Text
 		end
 		ImpulseVerticalSpeedBox.Text = `Impulse vertical speed, {ImpulseVerticalSpeed}`
 	end)
-	
+
 	ImpulseHorizontalSpeedBox.FocusLost:Connect(function()
 		if tonumber(ImpulseHorizontalSpeedBox.Text) then
 			ImpulseHorizontalSpeed = ImpulseHorizontalSpeedBox.Text
 		end
 		ImpulseHorizontalSpeedBox.Text = `Impulse horizontal speed, {ImpulseHorizontalSpeed}`
 	end)
-	
-	
+
+
 	EnableTeleportsButton.MouseButton1Click:Connect(function()
 		task.wait()
 		if EnableTeleportsButton:GetAttribute("Enabled") then
@@ -330,7 +304,7 @@ local function LoadGui()
 			TeleportsAreEnabled = false
 		end
 	end)
-	
+
 	LeftShiftButton.MouseButton1Click:Connect(function()
 		task.wait()
 		if LeftShiftButton:GetAttribute("Enabled") then
@@ -339,7 +313,7 @@ local function LoadGui()
 			LeftShiftIsEnabled = false
 		end
 	end)
-	
+
 	-- Teams
 	if #Teams:GetTeams() ~= 0 then
 		local TeamsCategory = CreateCategory("Teams 🔴🔵")
@@ -350,7 +324,7 @@ local function LoadGui()
 			end)
 		end
 	end
-	
+
 	-- Other
 	local OtherCategory = CreateCategory("Other 🤔")
 	local RightAltButton = InsertElementInCategory("TextButton", "Enable Right Alt", OtherCategory)
