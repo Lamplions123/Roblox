@@ -183,13 +183,6 @@ local function LoadGui()
 		BackgroundTransparency = 0
 	})
 	
-	local LButton = SetUpGuiElement(Instance.new("TextButton", ScreenGui), {
-		Name = "LButton",
-		Size = {X = 0.05, Y = 0.1},
-		Text = "L",
-		UICorner = 24
-	})
-	
 	---
 	local function CreateCategory(Name: string)
 		local CategoryFrame = SetUpGuiElement(Instance.new("Frame", ScrollingFrameFunctions), {
@@ -345,8 +338,6 @@ local function LoadGui()
 			WaterTransparencyBox.Text = `Water transparency, {GetOneNumber(WaterPart.Transparency)}`
 		end)
 	end
-	------
-	LButton.MouseButton1Click:Connect(ShowMainFrame)
 end
 
 LoadGui()
