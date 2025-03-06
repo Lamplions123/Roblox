@@ -22,6 +22,7 @@ local RightAltIsEnabled = false
 local WalkingOnWaterIsEnabled = false
 
 local EnableDefaultBehaviour = false
+local MouseIconStandartValue = UserInputService.MouseIconEnabled
 
 local GameName
 
@@ -85,6 +86,9 @@ end
 RunService.RenderStepped:Connect(function()
 	if EnableDefaultBehaviour then
 		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+		UserInputService.MouseIconEnabled = true
+	else
+		UserInputService.MouseIconEnabled = MouseIconStandartValue
 	end
 	
 	if GameName ~= "BloxFruit" then return end
