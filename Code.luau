@@ -48,7 +48,8 @@ local function GetLatestCharacterAndHumanoid()
 	return Character, Humanoid
 end
 
-UserInputService.InputBegan:Connect(function(Input)
+UserInputService.InputBegan:Connect(function(Input, Proc)
+	if Proc then return end
 	local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
 	local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
