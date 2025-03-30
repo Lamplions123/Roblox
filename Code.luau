@@ -54,10 +54,8 @@ UserInputService.InputBegan:Connect(function(Input, Proc)
 		if not LeftShiftIsEnabled then return end
 		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * ImpulseHorizontalSpeed)
 		HumanoidRootPart:ApplyImpulse(Vector3.new(0, ImpulseVerticalSpeed, 0))
-	elseif Input.KeyCode == Enum.KeyCode.Y then
-			print("123")
+	elseif Input.KeyCode == Enum.KeyCode.R then
 			if not TeleportsAreEnabled then return end
-			print("321")
 			Character:MoveTo(Mouse.Hit.Position)
 	elseif Input.KeyCode == Enum.KeyCode.RightAlt then	
 		if not RightAltIsEnabled then return end
@@ -76,7 +74,6 @@ local WaterBasePlane
 
 if game.PlaceId == BloxFruitWorlds[1] or game.PlaceId == BloxFruitWorlds[2] or game.PlaceId == BloxFruitWorlds[3] then
 	GameName = "BloxFruit"
-	LocalPlayer.VisionRadius.Value = math.huge
 end
 
 if GameName == "BloxFruit" then
@@ -85,7 +82,9 @@ if GameName == "BloxFruit" then
 	WaterPart.Anchored = true
 	WaterPart.CanCollide = false
 	WaterPart.Transparency = 1
-	WaterPart.Parent = workspace	
+	WaterPart.Parent = workspace
+	
+	LocalPlayer.VisionRadius.Value = math.huge
 end
 
 RunService.RenderStepped:Connect(function()
