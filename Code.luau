@@ -1,3 +1,4 @@
+
 task.wait()
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
@@ -54,10 +55,10 @@ UserInputService.InputBegan:Connect(function(Input, Proc)
 		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * ImpulseHorizontalSpeed)
 		HumanoidRootPart:ApplyImpulse(Vector3.new(0, ImpulseVerticalSpeed, 0))
 	elseif Input.KeyCode == Enum.KeyCode.Y then
-		print("123)
-		if not TeleportsAreEnabled then return end
-		print("321)
-		Character:MoveTo(Mouse.Hit.Position)
+			print("123")
+			if not TeleportsAreEnabled then return end
+			print("321")
+			Character:MoveTo(Mouse.Hit.Position)
 	elseif Input.KeyCode == Enum.KeyCode.RightAlt then	
 		if not RightAltIsEnabled then return end
 		local Parts = workspace:GetPartBoundsInBox(HumanoidRootPart.CFrame, Vector3.new(100, 100, 100))	
@@ -320,7 +321,7 @@ local function LoadGui()
 	RejoinTheServer.MouseButton1Click:Connect(function()
 		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
 	end)
-	
+
 	RightAltButton.MouseButton1Click:Connect(function()
 		task.wait()
 		if LeftShiftButton:GetAttribute("Enabled") then
@@ -329,7 +330,7 @@ local function LoadGui()
 			RightAltIsEnabled = false
 		end
 	end)
-	
+
 	LightingButton.MouseButton1Click:Connect(function()
 		if #LightingFolder:GetChildren() == 0 then
 			for Index, Value in Lighting:GetChildren() do
@@ -341,7 +342,7 @@ local function LoadGui()
 			end 
 		end
 	end)
-	
+
 	if GameName == "BloxFruit" then
 		local WaterTransparencyBox = InsertElementInCategory("TextBox", `Water transparency, {WaterPart.Transparency}`, OtherCategory)
 		WaterTransparencyBox.FocusLost:Connect(function()
