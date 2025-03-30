@@ -54,9 +54,9 @@ UserInputService.InputBegan:Connect(function(Input, Proc)
 		if not LeftShiftIsEnabled then return end
 		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * ImpulseHorizontalSpeed)
 		HumanoidRootPart:ApplyImpulse(Vector3.new(0, ImpulseVerticalSpeed, 0))
-	elseif Input.KeyCode == Enum.KeyCode.R then
-			if not TeleportsAreEnabled then return end
-			Character:MoveTo(Mouse.Hit.Position)
+	elseif Input.KeyCode == Enum.KeyCode.F then
+		if not TeleportsAreEnabled then return end
+		Character:MoveTo(Mouse.Hit.Position)
 	elseif Input.KeyCode == Enum.KeyCode.RightAlt then	
 		if not RightAltIsEnabled then return end
 		local Parts = workspace:GetPartBoundsInBox(HumanoidRootPart.CFrame, Vector3.new(100, 100, 100))	
@@ -83,7 +83,7 @@ if GameName == "BloxFruit" then
 	WaterPart.CanCollide = false
 	WaterPart.Transparency = 1
 	WaterPart.Parent = workspace
-	
+
 	LocalPlayer.VisionRadius.Value = math.huge
 end
 
