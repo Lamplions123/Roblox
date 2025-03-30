@@ -6,6 +6,8 @@ local TweenService = game:GetService("TweenService")
 local TeleportService = game:GetService("TeleportService")
 local Teams = game:GetService("Teams")
 local HttpService = game:GetService("HttpService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lighting = game:GetService("Lighting")
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -22,20 +24,12 @@ local LeftShiftIsEnabled = false
 local RightAltIsEnabled = false
 local WalkingOnWaterIsEnabled = false
 
-local EnableDefaultBehaviour = false
-local MouseIconStandartValue = UserInputService.MouseIconEnabled
-
 local GameName
 
 local function ShowMainFrame()
 	local MainFrame = LocalPlayer.PlayerGui:FindFirstChild("LGui").MainFrame
 	if not MainFrame then return end
 	MainFrame.Visible = not MainFrame.Visible
-	if MainFrame.Visible then
-		EnableDefaultBehaviour = true
-	else
-		EnableDefaultBehaviour = false
-	end
 end
 
 local function GetOneNumber(Number: number)
@@ -60,7 +54,9 @@ UserInputService.InputBegan:Connect(function(Input, Proc)
 		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * ImpulseHorizontalSpeed)
 		HumanoidRootPart:ApplyImpulse(Vector3.new(0, ImpulseVerticalSpeed, 0))
 	elseif Input.KeyCode == Enum.KeyCode.R then
+		print("1")
 		if not TeleportsAreEnabled then return end
+		print("2")
 		Character:MoveTo(Mouse.Hit.Position)
 	elseif Input.KeyCode == Enum.KeyCode.RightAlt then	
 		if not RightAltIsEnabled then return end
@@ -71,7 +67,7 @@ UserInputService.InputBegan:Connect(function(Input, Proc)
 			if NewCharacter == Character then return end
 			NewCharacter.Humanoid:TakeDamage(NewCharacter.Humanoid.Health)
 		end
-	elseif Input.KeyCode == Enum.KeyCode.LeftAlt then ShowMainFrame() end
+	elseif Input.KeyCode == Enum.KeyCode.X then ShowMainFrame() end
 end)
 --------------
 local WaterPart
@@ -90,15 +86,7 @@ if GameName == "BloxFruit" then
 	WaterPart.Parent = workspace	
 end
 
-
 RunService.RenderStepped:Connect(function()
-	if EnableDefaultBehaviour then
-		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
-		UserInputService.MouseIconEnabled = true
-	else
-		UserInputService.MouseIconEnabled = MouseIconStandartValue
-	end
-
 	if GameName ~= "BloxFruit" then return end
 	if not WaterBasePlane then return end
 	if not WaterPart then return end
@@ -116,6 +104,10 @@ RunService.RenderStepped:Connect(function()
 end)
 
 --------
+
+local LightingFolder = Instance.new("Folder")
+LightingFolder.Parent = ReplicatedStorage
+LightingFolder.Name = "LightingFolder"
 
 local function LoadGui()
 	local CategoryY = 0
@@ -246,14 +238,6 @@ local function LoadGui()
 		return Element
 	end
 
-	--- Teleport Category
-	local TeleportCategory = CreateCategory("Teleport 🌍")
-	local RejoinTheServer = InsertElementInCategory("TextButton", "Rejoin the current server", TeleportCategory, true)
-
-	RejoinTheServer.MouseButton1Click:Connect(function()
-		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
-	end)
-
 	-- Movement Category
 	local MovementCategory = CreateCategory("Movement 🏃‍")
 	if GameName == "BloxFruit" then
@@ -276,7 +260,7 @@ local function LoadGui()
 			SeaLevelButton.Text = `Sea level, {WaterPositionY - 16}`
 		end)
 	end
-	
+
 	local EnableTeleportsButton = InsertElementInCategory("TextButton", "Enable teleports ", MovementCategory)
 	local LeftShiftButton = InsertElementInCategory("TextButton", "Enable Left Shift", MovementCategory)
 	local ImpulseVerticalSpeedBox = InsertElementInCategory("TextBox", `Impulse vertical speed, {ImpulseVerticalSpeed}`, MovementCategory)
@@ -329,16 +313,36 @@ local function LoadGui()
 	-- Other
 	local OtherCategory = CreateCategory("Other 🤔")
 	local RightAltButton = InsertElementInCategory("TextButton", "Enable Right Alt", OtherCategory)
+	local LightingButton = InsertElementInCategory("TextButton", "Enable Lighting", OtherCategory)
+	local RejoinTheServer = InsertElementInCategory("TextButton", "Rejoin the current server", OtherCategory, true)
+
+	RejoinTheServer.MouseButton1Click:Connect(function()
+		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+	end)
+	
+	RightAltButton.MouseButton1Click:Connect(function()
+		task.wait()
+		if LeftShiftButton:GetAttribute("Enabled") then
+			RightAltIsEnabled = true
+		else
+			RightAltIsEnabled = false
+		end
+	end)
+	
+	LightingButton.MouseButton1Click:Connect(function()
+		if #LightingFolder:GetChildren() == 0 then
+			for Index, Value in Lighting:GetChildren() do
+				Value.Parent = LightingFolder
+			end
+		else
+			for Index, Value in LightingFolder:GetChildren() do
+				Value.Parent = Lighting
+			end 
+		end
+	end)
+	
 	if GameName == "BloxFruit" then
 		local WaterTransparencyBox = InsertElementInCategory("TextBox", `Water transparency, {WaterPart.Transparency}`, OtherCategory)
-		RightAltButton.MouseButton1Click:Connect(function()
-			task.wait()
-			if LeftShiftButton:GetAttribute("Enabled") then
-				RightAltIsEnabled = true
-			else
-				RightAltIsEnabled = false
-			end
-		end)
 		WaterTransparencyBox.FocusLost:Connect(function()
 			if tonumber(WaterTransparencyBox.Text) then
 				WaterPart.Transparency = WaterTransparencyBox.Text
