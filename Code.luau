@@ -333,6 +333,7 @@ local function LoadGui()
 	LightingButton.MouseButton1Click:Connect(function()
 		if #LightingFolder:GetChildren() == 0 then
 			for Index, Value in Lighting:GetChildren() do
+				if Value:IsA("Sky") then continue end
 				Value.Parent = LightingFolder
 			end
 		else
