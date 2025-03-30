@@ -53,10 +53,8 @@ UserInputService.InputBegan:Connect(function(Input, Proc)
 		if not LeftShiftIsEnabled then return end
 		HumanoidRootPart:ApplyImpulse(Camera.CFrame.LookVector * ImpulseHorizontalSpeed)
 		HumanoidRootPart:ApplyImpulse(Vector3.new(0, ImpulseVerticalSpeed, 0))
-	elseif Input.KeyCode == Enum.KeyCode.R then
-		print("1")
+	elseif Input.KeyCode == Enum.KeyCode.Y then
 		if not TeleportsAreEnabled then return end
-		print("2")
 		Character:MoveTo(Mouse.Hit.Position)
 	elseif Input.KeyCode == Enum.KeyCode.RightAlt then	
 		if not RightAltIsEnabled then return end
