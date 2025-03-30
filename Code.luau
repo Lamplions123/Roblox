@@ -75,6 +75,7 @@ local WaterBasePlane
 
 if game.PlaceId == BloxFruitWorlds[1] or game.PlaceId == BloxFruitWorlds[2] or game.PlaceId == BloxFruitWorlds[3] then
 	GameName = "BloxFruit"
+	LocalPlayer.VisionRadius.Value = math.huge
 end
 
 if GameName == "BloxFruit" then
