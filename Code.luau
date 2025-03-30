@@ -311,7 +311,7 @@ local function LoadGui()
 	-- Other
 	local OtherCategory = CreateCategory("Other 🤔")
 	local RightAltButton = InsertElementInCategory("TextButton", "Enable Right Alt", OtherCategory)
-	local LightingButton = InsertElementInCategory("TextButton", "Enable Lighting", OtherCategory)
+	local LightingButton = InsertElementInCategory("TextButton", "Disable Lighting", OtherCategory)
 	local RejoinTheServer = InsertElementInCategory("TextButton", "Rejoin the current server", OtherCategory, true)
 
 	RejoinTheServer.MouseButton1Click:Connect(function()
